@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hermes-seed-env
+  namespace: hermes
+  labels:
+    app: hermes-seed-env
+spec:
+  restartPolicy: Always
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+  containers:
+    - name: seed-env
+      image: nousresearch/hermes-agent:latest
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: HERMES_HOME
+          value: /home/hermes/.hermes
+        - name: HERMES_CONFIG_PATH
+          value: /home/hermes/.hermes/config.yaml
+        - name: HERMES_WEBUI_DEFAULT_WORKSPACE
+          value: /home/hermes/workspace
+      command:
+        - sh
+        - -c
+        - |
+          set -e
+          mkdir -p /home/hermes/.hermes /home/hermes/workspace
+          echo "[READY] kubectl cp local HERMES_HOME to /home/hermes/.hermes"
+          echo "[READY] kubectl cp local workspace to /home/hermes/workspace"
+          echo "[READY] hermes-agent-src PVC mounted at /mnt/hermes-agent-src, not under HERMES_HOME"
+          tail -f /dev/null
+      volumeMounts:
+        - name: hermes-home
+          mountPath: /home/hermes/.hermes
+        - name: hermes-agent-src
+          mountPath: /mnt/hermes-agent-src
+        - name: hermes-workspace
+          mountPath: /home/hermes/workspace
+      resources:
+        requests:
+          memory: 128Mi
+          cpu: 200m
+        limits:
+          memory: 512Mi
+          cpu: 1000m
+  volumes:
+    - name: hermes-home
+      persistentVolumeClaim:
+        claimName: hermes-home
+    - name: hermes-agent-src
+      persistentVolumeClaim:
+        claimName: hermes-agent-src
+    - name: hermes-workspace
+      persistentVolumeClaim:
+        claimName: hermes-workspace

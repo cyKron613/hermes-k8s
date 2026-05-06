@@ -1,0 +1,33 @@
+ARG HERMES_WEBUI_BASE=ghcr.io/nesquena/hermes-webui:latest
+ARG HERMES_AGENT_BASE=nousresearch/hermes-agent:latest
+
+FROM ${HERMES_AGENT_BASE} AS hermes-agent
+
+FROM ${HERMES_WEBUI_BASE}
+
+USER root
+
+COPY --from=hermes-agent /opt/hermes /opt/hermes
+
+RUN set -eux; \
+    mkdir -p /app /uv_cache; \
+    cp -a /apptoo/. /app/; \
+    chown -R hermeswebui:hermeswebui /app /uv_cache /opt/hermes; \
+    su hermeswebui -c 'export PATH="/home/hermeswebui/.local/bin:$PATH"; \
+      command -v uv >/dev/null 2>&1 || { echo "uv not found in base image" >&2; exit 1; }; \
+      export UV_PROJECT_ENVIRONMENT=venv; \
+      export UV_CACHE_DIR=/uv_cache; \
+      export UV_DEFAULT_INDEX=https://mirrors.aliyun.com/pypi/simple/; \
+      cd /app; \
+      uv venv venv; \
+      . /app/venv/bin/activate; \
+      uv pip install -r requirements.txt --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com; \
+      uv pip install -U pip setuptools --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com; \
+      uv pip install "/opt/hermes[all]" --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com; \
+      uv pip install "hindsight-client>=0.4.22" --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com; \
+      touch /app/venv/.deps_installed'; \
+    rm -rf /uv_cache/* /tmp/*
+
+USER hermeswebuitoo
+
+CMD ["/hermeswebui_init.bash"]
