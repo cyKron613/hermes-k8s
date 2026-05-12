@@ -50,7 +50,7 @@
 示例上游镜像可参考：
 
 - hermes-agent：nousresearch/hermes-agent:latest
-- hermes-webui：ghcr.io/nesquena/hermes-webui:latest
+- hermes-webui：ghcr.io/nesquena/hermes-webui:0.50.236
 - chrome：browserless/chrome:latest
 
 如果你不想推送镜像仓库，推荐做法是：
@@ -192,7 +192,7 @@ Dockerfile 当前默认使用公开基础镜像。你也可以通过 build-arg �
 ```bash
 docker build \
 	-f Dockerfile.hermes-webui-prebuilt \
-	--build-arg HERMES_WEBUI_BASE=ghcr.io/nesquena/hermes-webui:latest \
+	--build-arg HERMES_WEBUI_BASE=ghcr.io/nesquena/hermes-webui:0.50.236 \
 	--build-arg HERMES_AGENT_BASE=nousresearch/hermes-agent:latest \
 	-t hermes-webui-prebuilt:local \
 	.

@@ -1,4 +1,4 @@
-ARG HERMES_WEBUI_BASE=ghcr.io/nesquena/hermes-webui:latest
+ARG HERMES_WEBUI_BASE=ghcr.io/nesquena/hermes-webui:0.50.236
 ARG HERMES_AGENT_BASE=nousresearch/hermes-agent:latest
 
 FROM ${HERMES_AGENT_BASE} AS hermes-agent

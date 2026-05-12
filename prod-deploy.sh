@@ -3,7 +3,7 @@ set -euo pipefail
 
 IMAGE_TAG="${IMAGE_TAG:-local}"
 WEBUI_IMAGE="${WEBUI_IMAGE:-hermes-webui-prebuilt:${IMAGE_TAG}}"
-HERMES_WEBUI_BASE="${HERMES_WEBUI_BASE:-ghcr.io/nesquena/hermes-webui:latest}"
+HERMES_WEBUI_BASE="${HERMES_WEBUI_BASE:-ghcr.io/nesquena/hermes-webui:0.50.236}"
 HERMES_AGENT_BASE="${HERMES_AGENT_BASE:-nousresearch/hermes-agent:latest}"
 
 docker build \
