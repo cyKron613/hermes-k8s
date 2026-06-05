@@ -21,6 +21,7 @@
 ## 仓库结构
 
 - k8s-deployment-prod.yaml：主 Deployment 与 Service 清单
+- k8s-deployment-prod-proxy.yaml：代理增强版 Deployment 与 Service 清单（用于 Copilot API 访问受限场景）
 - k8s-pvc.yaml：PVC 定义
 - k8s-seed-env-pod.yaml：用于把本地 Hermes 数据同步到 PVC 的辅助 Pod
 - seed-pvc-via-pod.sh：将本地 HERMES_HOME / workspace 拷贝到 PVC
@@ -85,6 +86,14 @@ k3d image import hermes-webui-prebuilt:local -c <cluster-name>
 
 ## 快速开始
 
+### 关于代理版 YAML（为什么新增）
+
+在部分网络环境下，Hermes 调用 Copilot API（例如 `https://api.githubcopilot.com`）需要通过代理或 VPN 才能稳定访问。
+
+为此仓库新增了 `k8s-deployment-prod-proxy.yaml`，提供“容器附带本地代理配置”的部署方式，便于在本机已有代理端口的情况下直接让容器出站流量走代理。
+
+如果你的环境不需要代理，继续使用 `k8s-deployment-prod.yaml` 即可。
+
 ### 1. 创建命名空间
 
 ```bash
@@ -122,6 +131,13 @@ kubectl get pvc -n hermes
 
 ```bash
 kubectl apply -f k8s-deployment-prod.yaml
+kubectl rollout status deployment/hermes-stack -n hermes
+```
+
+如果你需要通过本地代理访问 Copilot API，请改为：
+
+```bash
+kubectl apply -f k8s-deployment-prod-proxy.yaml
 kubectl rollout status deployment/hermes-stack -n hermes
 ```
 

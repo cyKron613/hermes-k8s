@@ -22,6 +22,5 @@ Use this checklist before pushing the repository to GitHub.
 ## Final check commands
 
 ```bash
-rg -n "(eyJ|token=|nexus-cloud|xuanyuan.run|hi-dolphin-ai-prod|10\.12\.)" .
 rg -n "namespace:|image:|storageClassName:|nodePort:" *.yaml
 ```
